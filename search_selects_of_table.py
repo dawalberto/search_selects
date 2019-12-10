@@ -54,7 +54,7 @@ for file in listOfFiles:
   current_file = file
   with open(file, mode='r', encoding='utf8') as f:
     for num, line in enumerate(f, 1):
-      if (line.rfind('= " select') > -1 or line.rfind('= "select') > -1 or line.rfind('=" select') > -1 or line.rfind('= " Select') > -1 or line.rfind('= "Select') > -1 or line.rfind('=" Select') > -1 or line.rfind('= " SELECT') > -1 or line.rfind('= "SELECT') > -1 or line.rfind('=" SELECT') > -1) and file.rfind('search_selects.py') == -1:
+      if (line.upper().rfind('= " SELECT') > -1 or line.upper().rfind('= "SELECT') > -1 or line.upper().rfind('=" SELECT') > -1) and file.rfind('search_selects.py') == -1 and file.rfind('search_selects_of_table.py') == -1:
         found_select = True
         line_select = num
       if found_select:
