@@ -9,11 +9,11 @@ print('Current dir: ' + dirName)
 
 def print_select(select, file, numLine):
   all_selects.write('################################################################################################## \r\n')
-  all_selects.write('\r\n')
-  all_selects.write('ARCHIVO: ' + file + '\r\n')
+  #all_selects.write('\r\n')
+  all_selects.write('ARCHIVO: ' + file + '\r')
   all_selects.write('LINEA: ' + str(numLine) + '\r\n')
-  all_selects.write(select + '\r\n')
-  all_selects.write('################################################################################################## \r\n')
+  all_selects.write(select + '\r')
+  all_selects.write('################################################################################################## \r')
 
 def getListOfFiles(dirName):
   # create a list of file and sub directories 
@@ -36,12 +36,12 @@ def getListOfFiles(dirName):
 listOfFiles = getListOfFiles(dirName)
 
 # Print the files
-all_selects = open('all_selects.txt', 'w+')
+all_selects = open('all_selects.txt', mode='w+', encoding='utf8')
 
 for file in listOfFiles:
   print(file)
   current_file = file
-  with open(file, 'r') as f:
+  with open(file, mode='r', encoding='utf8') as f:
     for num, line in enumerate(f, 1):
       if (line.rfind('= " select') > -1 or line.rfind('= "select') > -1 or line.rfind('=" select') > -1 or line.rfind('= " Select') > -1 or line.rfind('= "Select') > -1 or line.rfind('=" Select') > -1 or line.rfind('= " SELECT') > -1 or line.rfind('= "SELECT') > -1 or line.rfind('=" SELECT') > -1) and file.rfind('search_selects.py') == -1:
         found_select = True
@@ -54,7 +54,7 @@ for file in listOfFiles:
           print_select(current_select, current_file, line_select)
           current_select = ''
 
-all_selects.write('\r\n')
-all_selects.write('----------------------------------\r\n')
+all_selects.write('\r')
+all_selects.write('----------------------------------\r')
 all_selects.write('TOTAL SELECTS: ' + str(len(l_all)))
 all_selects.close()
