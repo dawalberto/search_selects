@@ -1,19 +1,26 @@
 import os
 
-l_all = []
+l_all_selects, l_without_relationship, l_with_relationship = [], [], []
 found_select = False
+b_without_relationship = False
 current_select = ''
 
 dirName = os.getcwd()
 print('Current dir: ' + dirName)
 
-def print_select(select, file, numLine):
-  all_selects.write('################################################################################################## \r\n')
-  #all_selects.write('\r\n')
-  all_selects.write('ARCHIVO: ' + file + '\r')
-  all_selects.write('LINEA: ' + str(numLine) + '\r\n')
-  all_selects.write(select + '\r')
-  all_selects.write('################################################################################################## \r')
+def print_select(select, file, num_line, file_to_write):
+  file_to_write.write('################################################################################################## \r\n')
+  #file_to_write.write('\r\n')
+  file_to_write.write('ARCHIVO: ' + file + '\r')
+  file_to_write.write('LINEA: ' + str(num_line) + '\r\n')
+  file_to_write.write(select + '\r')
+  file_to_write.write('################################################################################################## \r')
+
+def end_print_and_close(file, list):
+  file.write('\r')
+  file.write('----------------------------------\r')
+  file.write('TOTAL SELECTS: ' + str(len(list)))
+  file.close()
 
 def getListOfFiles(dirName):
   # create a list of file and sub directories 
@@ -37,6 +44,8 @@ listOfFiles = getListOfFiles(dirName)
 
 # Print the files
 all_selects = open('all_selects.txt', mode='w+', encoding='utf8')
+without_relationship = open('without_relationship.txt', mode='w+', encoding='utf8')
+with_relationship = open('with_relationship.txt', mode='w+', encoding='utf8')
 
 for file in listOfFiles:
   print(file)
@@ -48,13 +57,23 @@ for file in listOfFiles:
         line_select = num
       if found_select:
         current_select += line
+        if line.upper().rfind('FROM') > -1:
+          index_of_from = line.upper().rfind('FROM')
+          if line.rfind(',', index_of_from) == -1:
+            b_without_relationship = True
         if line.rfind(';') > -1:
           found_select = False
-          l_all.append(current_select)
-          print_select(current_select, current_file, line_select)
+          l_all_selects.append(current_select)
+          print_select(current_select, current_file, line_select, all_selects)
+          if b_without_relationship:
+            print_select(current_select, current_file, line_select, without_relationship)
+            l_without_relationship.append(current_select)
+            b_without_relationship = False
+          else:
+            print_select(current_select, current_file, line_select, with_relationship)
+            l_with_relationship.append(current_select)
           current_select = ''
 
-all_selects.write('\r')
-all_selects.write('----------------------------------\r')
-all_selects.write('TOTAL SELECTS: ' + str(len(l_all)))
-all_selects.close()
+end_print_and_close(all_selects, l_all_selects)
+end_print_and_close(without_relationship, l_without_relationship)
+end_print_and_close(with_relationship, l_with_relationship)
